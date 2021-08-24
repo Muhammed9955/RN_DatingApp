@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Text,
   View,
@@ -16,10 +16,15 @@ import BG from "../assets/bg.png";
 const image = { uri: "https://reactjs.org/logo-og.png" };
 
 import { auth } from "../firebase";
+import { Platform } from "react-native";
 
 export default function Login({ navigation }) {
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
+  useLayoutEffect(() => {
+    navigation.setOptions({});
+  }, [navigation]);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
@@ -28,6 +33,7 @@ export default function Login({ navigation }) {
     });
     return unsubscribe;
   }, []);
+
   const loginFunc = () => {
     if (Email?.trim().length === 0 || Password?.trim().length === 0) {
       alert("please fill all inputs ");
@@ -37,7 +43,12 @@ export default function Login({ navigation }) {
       .catch((err) => alert(err));
   };
   return (
-    <KeyboardAvoidingView behavior="padding" enabled style={styles.contianer}>
+    <KeyboardAvoidingView
+      enabled
+      style={styles.contianer}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      // keyboardVerticalOffset={90}
+    >
       <StatusBar style="light" />
       <ImageBackground source={BG} resizeMode="cover" style={styles.image}>
         <Text style={styles.header}>LRHS Dating</Text>

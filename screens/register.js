@@ -18,6 +18,7 @@ import InputField from "../components/InputField";
 import BG from "../assets/bg.png";
 
 import { auth } from "../firebase";
+import { Platform } from "react-native";
 
 export default function Register({ navigation }) {
   const [Email, setEmail] = useState("");
@@ -73,7 +74,11 @@ export default function Register({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" enabled>
+    <KeyboardAvoidingView
+      enabled
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      // keyboardVerticalOffset={90}
+    >
       <StatusBar style="light" />
       <ScrollView>
         <ImageBackground source={BG} resizeMode="cover" style={styles.image}>

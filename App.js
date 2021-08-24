@@ -6,16 +6,18 @@ import Constants from "expo-constants";
 import Register from "./screens/register";
 import Login from "./screens/Login";
 import Home from "./screens/Home";
+import AddChatScreen from "./screens/AddChatScreen";
+import ChatScreen from "./screens/ChatScreen";
+import { auth } from "./firebase";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const isAuth = true;
   const globalScreenOptions = {
     headerStyle: { backgroundColor: "green" },
     headerTintStyle: { color: "white" },
     headerTintColor: "white",
-    headerShown: isAuth,
+    headerShown: true,
   };
   return (
     <NavigationContainer>
@@ -23,9 +25,19 @@ export default function App() {
         // initialRouteName="Home"
         screenOptions={globalScreenOptions}
       >
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ header: () => null }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={Register}
+          options={{ header: () => null }}
+        />
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="AddChat" component={AddChatScreen} />
+        <Stack.Screen name="Chat" component={ChatScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
