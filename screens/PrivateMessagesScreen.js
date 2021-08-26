@@ -11,25 +11,18 @@ import { Icon, Avatar } from "react-native-elements";
 import CustomListItem from "../components/CustomListItem";
 import { auth, db } from "../firebase";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
-import MainButton from "../components/MainButton";
-import { Button, Overlay } from "react-native-elements";
-import SetProfilePic from "../components/SetProfilePic";
-import SetBio from "../components/SetBio";
 
-const Home = ({ navigation }) => {
+
+const PrivateMessagesScreen = ({ navigation }) => {
   const [chats, setChats] = useState([]);
   const [users, setUsers] = useState([]);
-
-  const [visible, setVisible] = useState(true);
-  const toggleOverlay = () => {
-    setVisible(!visible);
-  };
-
   const signOut = () => {
     auth.signOut().then(() => {
       navigation.replace("Login");
     });
   };
+
+
   useEffect(() => {
     const unsubscribe = db.collection("chats").onSnapshot((snapshot) => {
       // console.log({ docs: snapshot.docs });
@@ -50,9 +43,10 @@ const Home = ({ navigation }) => {
       );
     });
 
-    // return unsubscribe;
+    return unsubscribe;
   }, []);
-
+  // console.log({ users });
+  // console.log({ chats });
   useLayoutEffect(() => {
     navigation.setOptions({
       title: "Full Name",
@@ -103,23 +97,8 @@ const Home = ({ navigation }) => {
       chatName,
     });
   };
-
-  // console.log({ currentUser: auth.currentUser });
-  useEffect(() => {
-    const func = async function getDoc() {
-      const snapshot = await db
-        .collection("users")
-        .where("uid", "==", auth.currentUser.uid)
-        .get();
-      const data = snapshot.data();
-      console.log({ snapshot });
-      console.log({ data });
-    };
-    return func;
-  }, []);
-
   // console.log({ chats });
-  // console.log({ users });
+  // console.log({ currentUser_uid: auth.currentUser.uid });
   return (
     <SafeAreaView>
       <View
@@ -134,57 +113,41 @@ const Home = ({ navigation }) => {
           borderBottomWidth: 5,
         }}
       >
-        <MaterialCommunityIcons name="heart" color="green" size={50} />
-        <MainButton text="filter" width="60%" />
-        <MaterialCommunityIcons name="heart" color="green" size={50} />
+        <Text style={styles.headerTitle}>Private Messages</Text>
       </View>
       <ScrollView style={styles.container}>
-        {chats.map((i) => (
+        {/* {chats.map((i) => (
           <CustomListItem
             key={i.id}
             id={i.id}
             enterChat={enterChat}
             data={i.data}
           />
-        ))}
+        ))} */}
         {users.map((i) => (
           <CustomListItem
             key={i.id}
             id={i.id}
             data={i.data}
             chatName={i.data.fullName}
-            isProfile
           />
         ))}
-        <View style={{ height: "20%" }}>
-          {/* <Button title="Open Overlay" onPress={toggleOverlay} /> */}
-          <Overlay
-            isVisible={visible}
-            onBackdropPress={toggleOverlay}
-            overlayStyle={styles.Overlay}
-          >
-            <SetProfilePic />
-            {/* <SetBio /> */}
-          </Overlay>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Home;
+export default PrivateMessagesScreen;
 
 const styles = StyleSheet.create({
   container: {
     height: "100%",
   },
-  Overlay: {
-    width: "100%",
-    height: "50%",
-    bottom: 0,
-    left: 0,
-    marginTop: "auto",
-    justifyContent: "center",
-    alignItems: "center",
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 30,
+    padding: 10,
   },
+  
 });

@@ -28,6 +28,7 @@ export default function Login({ navigation }) {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
+        // navigation.replace("PrivateMessages");
         navigation.replace("Home");
       }
     });
@@ -118,8 +119,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
     paddingTop: "30%",
+    width: "100%",
     // paddingTop: Constants.statusBarHeight,
     // backgroundColor: "#ecf0f1",
     // padding: 8,
@@ -129,6 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    height: "100%",
   },
   newAccountButton: {
     fontSize: 20,

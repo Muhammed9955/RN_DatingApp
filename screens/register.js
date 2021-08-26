@@ -17,7 +17,7 @@ import MainButton from "../components/MainButton";
 import InputField from "../components/InputField";
 import BG from "../assets/bg.png";
 
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { Platform } from "react-native";
 
 export default function Register({ navigation }) {
@@ -27,7 +27,7 @@ export default function Register({ navigation }) {
   const [Gender, setGender] = useState("");
   const [Gradelevel, setGradelevel] = useState("");
   const [RelationShipStatus, setRelationShipStatus] = useState("");
-
+  const [AuthUser, setAuthUser] = useState(null);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
@@ -57,20 +57,27 @@ export default function Register({ navigation }) {
       RelationShipStatus?.trim().length === 0
     ) {
       alert("please choose correct option");
+    } else {
+      auth
+        .createUserWithEmailAndPassword(Email.trim(), Password.trim())
+        .then((authUser) => {
+          // console.log({ authUser });
+          // console.log({ FullName, Gender, Gradelevel, RelationShipStatus });
+          setAuthUser(authUser);
+          db.collection("users").doc(authUser?.uid).set({
+            uid: auth.currentUser.uid,
+            email: auth.currentUser.email,
+            fullName: FullName,
+            gender: Gender,
+            gradeLevel: Gradelevel,
+            relationShipStatus: RelationShipStatus,
+          });
+        })
+        .then(() => {
+          navigation.goBack();
+        })
+        .catch((err) => alert(err));
     }
-    auth
-      .createUserWithEmailAndPassword(Email.trim(), Password.trim())
-      .then((authUser) => {
-        console.log({ authUser });
-        console.log({ FullName, Gender, Gradelevel, RelationShipStatus });
-        authUser.user.update({
-          FullName: FullName.trim(),
-          Gender: Gender.trim(),
-          Gradelevel: Gradelevel.trim(),
-          RelationShipStatus: RelationShipStatus.trim(),
-        });
-      })
-      .catch((err) => alert(err));
   };
 
   return (
@@ -93,20 +100,20 @@ export default function Register({ navigation }) {
               value={Email}
               placeholderText="Email:"
               type="email"
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={(text) => setEmail(text.trim())}
             />
             <InputField
               value={Password}
               placeholderText="Password:"
               type="password"
               secureTextEntry
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={(text) => setPassword(text.trim())}
             />
             <InputField
               value={FullName}
               placeholderText="First & Last Name:"
               type="text"
-              onChangeText={(text) => setFullName(text)}
+              onChangeText={(text) => setFullName(text.trim())}
             />
 
             <Picker
@@ -115,8 +122,8 @@ export default function Register({ navigation }) {
               onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
             >
               <Picker.Item label="Gender" value="" />
-              <Picker.Item label="Male" value="Male" />
-              <Picker.Item label="Female" value="Female" />
+              <Picker.Item label="Male" value="male" />
+              <Picker.Item label="Female" value="female" />
             </Picker>
             <Picker
               style={{ height: 50, width: "100%", fontSize: 20 }}

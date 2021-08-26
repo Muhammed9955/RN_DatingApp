@@ -41,7 +41,10 @@ const ChatScreen = ({ navigation, route }) => {
         </View>
       ),
       headerLeft: () => (
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ marginLeft: 5 }}
+        >
           <AntDesign name="arrowleft" size={24} color="white" />
         </TouchableOpacity>
       ),
@@ -64,7 +67,7 @@ const ChatScreen = ({ navigation, route }) => {
       ),
     });
   }, []);
-  console.log({ currentUser: auth.currentUser });
+  // console.log({ currentUser: auth.currentUser });
   const sendMessage = () => {
     Keyboard.dismiss();
 
@@ -77,6 +80,7 @@ const ChatScreen = ({ navigation, route }) => {
     });
 
     setInput("");
+    console.log({ messages });
   };
 
   useLayoutEffect(() => {
@@ -93,9 +97,12 @@ const ChatScreen = ({ navigation, route }) => {
           }))
         );
       });
-    //   return unsubscribe
   }, [route]);
 
+  // console.log({ input });
+  // console.log({ route });
+  // console.log({ navigation });
+  // console.log({ messages });
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <StatusBar style="light" />
@@ -104,7 +111,7 @@ const ChatScreen = ({ navigation, route }) => {
         keyboardVerticalOffset={90}
         style={styles.container}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss()}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <>
             <ScrollView
               contentContainerStyle={{
@@ -112,8 +119,9 @@ const ChatScreen = ({ navigation, route }) => {
               }}
             >
               {messages?.map(({ id, data }) => {
-                data.email == auth.currentUser.email ? (
+                data.email === auth.currentUser.email ? (
                   <View key={id} style={styles.reciever}>
+                    {/* {console.log({ id, data })} */}
                     <Avatar
                       rounded
                       size={30}
@@ -149,7 +157,7 @@ const ChatScreen = ({ navigation, route }) => {
                         right: -5,
                       }}
                     />
-                    <Text style={styles.senderText}>{data.message}</Text>
+                    <Text style={styles.senderText}>{data?.message}</Text>
                   </View>
                 );
               })}
@@ -162,7 +170,7 @@ const ChatScreen = ({ navigation, route }) => {
                 style={styles.textInput}
                 onSubmitEditing={sendMessage}
               />
-              <TouchableOpacity>
+              <TouchableOpacity onPress={sendMessage}>
                 <Ionicons name="send" size={24} color="#2B68E6" />
               </TouchableOpacity>
             </View>
@@ -192,7 +200,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
     borderColor: "transparent",
     backgroundColor: "#ECECEC",
-    // borderWidth: 1,
     color: "gray",
     borderRadius: 30,
   },

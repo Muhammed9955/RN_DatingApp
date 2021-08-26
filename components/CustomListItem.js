@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { View } from "react-native";
 import { StyleSheet } from "react-native";
-import { ListItem, Avatar } from "react-native-elements";
+import { ListItem, Avatar, Badge } from "react-native-elements";
 import { db } from "../firebase";
 
-const CustomListItem = ({ id, chatName, enterChat }) => {
+const CustomListItem = ({ id, enterChat, chatName, data, isProfile }) => {
+  const { fullName, relationShipStatus, gradeLevel, gender } = data;
   const [chatMessages, setChatMessages] = useState([]);
+  // console.log({ data });
   useEffect(() => {
     const unsubscribe = db
       .collection("chats")
@@ -21,26 +24,37 @@ const CustomListItem = ({ id, chatName, enterChat }) => {
       });
     return unsubscribe;
   }, []);
-  console.log({ chatName });
+  // console.log({ chatName });
   return (
     <ListItem onPress={() => enterChat(id, chatName)} key={id}>
-      <Avatar
-        rounded
-        size="medium"
-        source={{
-          uri:
-            chatMessages?.[0]?.photoURL ||
-            "https://hsc.unm.edu/community/assets/img/faces/no-image.png",
-        }}
-      />
+      <View>
+        <Avatar
+          rounded
+          size="medium"
+          source={{
+            uri:
+              chatMessages?.[0]?.photoURL ||
+              "https://randomuser.me/api/portraits/men/41.jpg",
+          }}
+        />
+        <Badge
+          status="success"
+          containerStyle={{ position: "absolute", top: 2, right: 2 }}
+        />
+      </View>
       <ListItem.Content>
         <ListItem.Title style={{ fontWeight: "800" }}>
           {chatName}
         </ListItem.Title>
-        <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
-          {chatMessages?.[0]?.displayName || "full Name"} :{" "}
-          {chatMessages?.[0]?.message || "_"}
-        </ListItem.Subtitle>
+        {isProfile ? (
+          <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
+            {`${relationShipStatus}, ${gradeLevel}, ${gender}  `}
+          </ListItem.Subtitle>
+        ) : (
+          <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
+            {`last message`}
+          </ListItem.Subtitle>
+        )}
       </ListItem.Content>
     </ListItem>
   );

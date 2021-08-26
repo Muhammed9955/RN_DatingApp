@@ -8,7 +8,8 @@ import Login from "./screens/Login";
 import Home from "./screens/Home";
 import AddChatScreen from "./screens/AddChatScreen";
 import ChatScreen from "./screens/ChatScreen";
-import { auth } from "./firebase";
+import PrivateMessagesScreen from "./screens/PrivateMessagesScreen";
+import { AuthProvider } from "./context/auth";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,25 +21,32 @@ export default function App() {
     headerShown: true,
   };
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        // initialRouteName="Home"
-        screenOptions={globalScreenOptions}
-      >
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{ header: () => null }}
-        />
-        <Stack.Screen
-          name="Register"
-          component={Register}
-          options={{ header: () => null }}
-        />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="AddChat" component={AddChatScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          // initialRouteName="PrivateMessagesScreen"
+          screenOptions={globalScreenOptions}
+        >
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ header: () => null }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={Register}
+            options={{ header: () => null }}
+          />
+
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="AddChat" component={AddChatScreen} />
+          <Stack.Screen name="Chat" component={ChatScreen} />
+          <Stack.Screen
+            name="PrivateMessages"
+            component={PrivateMessagesScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
